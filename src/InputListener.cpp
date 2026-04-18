@@ -7,6 +7,11 @@ extern int g_SprintActionID;
 extern int g_SneakActionID;
 
 namespace {
+    float timeheld = 0.0f;
+    bool g_sprintActive = false;
+
+    float now() { return static_cast<float>(RE::GetDurationOfApplicationRunTime()) / 1000.0f; }
+
     void PerformSneakToggle() {
         auto* playerControls = RE::PlayerControls::GetSingleton();
         if (!playerControls) return;
@@ -27,21 +32,47 @@ namespace {
     }
 
     void StartSprint() {
-        auto* player = RE::PlayerCharacter::GetSingleton();
-        if (!player) return;
+        auto* playerControls = RE::PlayerControls::GetSingleton();
+        if (!playerControls) return;
 
+        auto* sprintHandler = playerControls->sprintHandler;
+        if (!sprintHandler) return;
+
+        RE::ButtonEvent* fakeEvent = RE::ButtonEvent::Create(RE::INPUT_DEVICE::kKeyboard, "Sprint", 0, 1.0f, 0.0f);
+        if (!fakeEvent) return;
+
+        auto* data = &playerControls->data;
+
+        g_sprintActive = true;
         SSC::BeginOwnedSprint();
-        player->NotifyAnimationGraph("SprintStart");
-        SSC::EndOwnedSprintNow();
+        if (sprintHandler->CanProcess(fakeEvent)) {
+            sprintHandler->ProcessButton(fakeEvent, data);
+        }
+        timeheld = now();
+        SSC_DEBUG_LOG("[SSC] Sprint started");
     }
 
     void StopSprint() {
-        auto* player = RE::PlayerCharacter::GetSingleton();
-        if (!player) return;
+        auto* playerControls = RE::PlayerControls::GetSingleton();
+        if (!playerControls) return;
+
+        auto* sprintHandler = playerControls->sprintHandler;
+        if (!sprintHandler) return;
+
+        float held = now() - timeheld;
+        RE::ButtonEvent* fakeEvent = RE::ButtonEvent::Create(RE::INPUT_DEVICE::kKeyboard, "Sprint", 0, 0.0f, held);
+        if (!fakeEvent) return;
+
+        auto* data = &playerControls->data;
 
         SSC::BeginOwnedSprint();
-        player->NotifyAnimationGraph("SprintStop");
+        if (sprintHandler->CanProcess(fakeEvent)) {
+            sprintHandler->ProcessButton(fakeEvent, data);
+        }
         SSC::EndOwnedSprintNow();
+        g_sprintActive = false;
+        timeheld = 0.0f;
+        SSC_DEBUG_LOG("[SSC] Sprint stopped");
     }
 }
 
@@ -66,4 +97,23 @@ RE::BSEventNotifyControl InputListener::InputListener::ProcessEvent(const SKSE::
     }
 
     return RE::BSEventNotifyControl::kContinue;
+}
+
+void InputListener::UpdateSSC() {
+    if (!g_sprintActive) return;
+
+    auto* playerControls = RE::PlayerControls::GetSingleton();
+    if (!playerControls) return;
+
+    auto* sprintHandler = playerControls->sprintHandler;
+    if (!sprintHandler) return;
+
+    float held = now() - timeheld;
+    auto* fakeEvent = RE::ButtonEvent::Create(RE::INPUT_DEVICE::kKeyboard, "Sprint", 0, 0.5f, held);
+    if (!fakeEvent) return;
+
+    if (sprintHandler->CanProcess(fakeEvent)) {
+        sprintHandler->ProcessButton(fakeEvent, &playerControls->data);
+    }
+    SSC_DEBUG_LOG("[SSC] Sprint updated, held for {:.2f} seconds", held);
 }

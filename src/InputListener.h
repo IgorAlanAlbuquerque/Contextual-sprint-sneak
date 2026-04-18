@@ -19,4 +19,6 @@ namespace InputListener {
         RE::BSEventNotifyControl ProcessEvent(const SKSE::ModCallbackEvent* a_event,
                                               RE::BSTEventSource<SKSE::ModCallbackEvent>*) override;
     };
+
+    void UpdateSSC();
 }

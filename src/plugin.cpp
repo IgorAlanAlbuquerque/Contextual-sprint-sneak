@@ -49,13 +49,18 @@ namespace {
         g_SneakActionID = FindOrCreateAction(api, "Sneak");
         api->UpdateListener(0, g_SneakActionID, "SprintSneakContextual", "Tap to Sneak", true);
 
-        if (auto tapInfo = api->GetActionInfo(g_SneakActionID); !tapInfo.isValid) {
+        if (auto tapInfo = api->GetActionInfo(g_SneakActionID); tapInfo.pcMainKey == 0) {
             tapInfo.id = g_SneakActionID;
             tapInfo.name = "Sneak";
             tapInfo.pcMainKey = 56;
             tapInfo.pcMainAction = 1;
+            tapInfo.pcMainTapCount = 1;
             tapInfo.gamepadMainKey = 330;
-            tapInfo.gamepadMainAction = 4;
+            tapInfo.gamepadMainAction = 1;
+            tapInfo.gamepadMainTapCount = 1;
+            tapInfo.useCustomTimings = true;
+            tapInfo.holdDuration = 0.20f;
+            tapInfo.tapWindow = 0.15f;
             tapInfo.isValid = true;
             api->UpdateActionMapping(g_SneakActionID, tapInfo);
         }
@@ -63,13 +68,15 @@ namespace {
         g_SprintActionID = FindOrCreateAction(api, "Sprint");
         api->UpdateListener(0, g_SprintActionID, "SprintSneakContextual", "Hold to Sprint", true);
 
-        if (auto tapInfo = api->GetActionInfo(g_SprintActionID); !tapInfo.isValid) {
+        if (auto tapInfo = api->GetActionInfo(g_SprintActionID); tapInfo.pcMainKey == 0) {
             tapInfo.id = g_SprintActionID;
             tapInfo.name = "Sprint";
             tapInfo.pcMainKey = 56;
             tapInfo.pcMainAction = 2;
             tapInfo.gamepadMainKey = 330;
-            tapInfo.gamepadMainAction = 4;
+            tapInfo.gamepadMainAction = 2;
+            tapInfo.useCustomTimings = true;
+            tapInfo.holdDuration = 0.20f;
             tapInfo.isValid = true;
             api->UpdateActionMapping(g_SprintActionID, tapInfo);
         }
