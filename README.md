@@ -1,24 +1,24 @@
-# SKSE "Hello, world!"
+# Contextual Sprint Sneak
 
-Very simple C++ SKSE plugin for Skyrim!
+### What does it do?
 
----
+**Contextual Sprint Sneak** makes the Sneak button behave smartly depending on how your character is moving:
 
-- [SKSE "Hello, world!"](#skse-hello-world)
-- [What does it do?](#what-does-it-do)
-- [CommonLibSSE NG](#commonlibsse-ng)
-- [Requirements](#requirements)
-  - [Opening the project](#opening-the-project)
-- [Project setup](#project-setup)
-  - [Finding Your "`mods`" Folder](#finding-your-mods-folder)
-- [Setup your own repository](#setup-your-own-repository)
-- [Sharing is Caring](#sharing-is-caring)
+- **Standing still / walking** → Press Sneak → you **enter sneak**, just like vanilla.  
+- **Running (stick pushed all the way)** → Press Sneak → you **start sprinting instead of sneaking**.
 
-# What does it do?
+In practice, the same button is used to “crouch when idle/walking” and to “burst into a sprint when already running”.  
+It doesn’t change animations, perks, or stamina cost — it only rewrites the input event *before* the game processes it.
 
-After running Skyrim, once at the Main Menu, press the `~` key to open the game console.
+Internally, the mod:
 
-You will see that we printed `"Hello, world!"` to the console at the Main Menu 🐉
+- Listens to raw input events.
+- Detects when the logical event is **Sneak**.
+- Checks the player’s movement state (idle, walking, running, already sprinting).
+- If the player is running, converts the Sneak event into a **Sprint** event.
+- Otherwise, leaves the event as vanilla Sneak.
+
+No scripts, no menus, no weird dependencies — just clean input logic.
 
 # CommonLibSSE NG
 
@@ -41,6 +41,7 @@ Because this uses [CommonLibSSE NG](https://github.com/CharmedBaryon/CommonLibSS
 ## Opening the project
 
 Once you have Visual Studio 2022 installed, you can open this folder in basically any C++ editor, e.g. [VS Code](https://code.visualstudio.com/) or [CLion](https://www.jetbrains.com/clion/) or [Visual Studio](https://visualstudio.microsoft.com/)
+>
 - > _for VS Code, if you are not automatically prompted to install the [C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools) and [CMake Tools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools) extensions, please install those and then close VS Code and then open this project as a folder in VS Code_
 
 You may need to click `OK` on a few windows, but the project should automatically run CMake!
@@ -50,14 +51,6 @@ It will _automatically_ download [CommonLibSSE NG](https://github.com/CharmedBar
 # Project setup
 
 By default, when this project compiles it will output a `.dll` for your SKSE plugin into the `build/` folder.
-
-If you want to configure this project to output your plugin files
-into your Skyrim Special Edition's "`Data`" folder:
-
-- Set the `SKYRIM_FOLDER` environment variable to the path of your Skyrim installation  
-  e.g. `C:\Program Files (x86)\Steam\steamapps\common\Skyrim Special Edition`
-
-<img src="https://raw.githubusercontent.com/SkyrimDev/Images/main/images/screenshots/Setting%20Environment%20Variables/SKYRIM_FOLDER.png" height="150">
 
 If you want to configure this project to output your plugin files
 into your "`mods`" folder:  
@@ -80,26 +73,3 @@ In Mod Organizer 2:
 In Vortex:
 
 <img src="https://raw.githubusercontent.com/SkyrimDev/Images/main/images/screenshots/Vortex/VortexSettingsModsFolder.png" height="150">
-
-# Setup your own repository
-
-If you clone this template on GitHub, please:
-
-- Go into `LICENSE` and change the year and change `<YOUR NAME HERE>` to your name.
-- Go into `CODE_OF_CONDUCT.md` and change `<YOUR CONTACT INFO HERE>` to your contact information.
-
-The `LICENSE` defaults to using the [MIT License](https://choosealicense.com/licenses/mit/), a permissive license which is used by many popular Skyrim mods (_including [CommonLibSSE](https://github.com/Ryan-rsm-McKenzie/CommonLibSSE)_).
-
-The `CODE_OF_CONDUCT.md` defaults to using the [Contributor Covenant](https://www.contributor-covenant.org/), the most popular code of conduct for open source communities.
-
-If you'd like to know more about open source licenses, see:
-- [Licensing a repository](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)
-- [Choose an open source license](https://choosealicense.com/)
-
-# Sharing is Caring
-
-**If you use this template, PLEASE release your project as a public open source project.** 💖
-
-**Please do not release your SKSE plugin on Nexus/etc without making the source code available** \*
-
-> \* _You do you. But please help our community by sharing your source `<3`_

@@ -1,6 +1,5 @@
 {
-    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
-    "dependencies": [
-        "commonlibsse-ng"
-    ]
+  "name": "contexual-sprint-sneak",
+  "dependencies": ["fmt", "spdlog", "directxtk", "rapidcsv"],
+  "builtin-baseline": "b94ab47c998b93fe72b0f501eaac70f96328019e"
 }
