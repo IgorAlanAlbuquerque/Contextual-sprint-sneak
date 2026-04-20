@@ -87,9 +87,14 @@ namespace {
         if (!msg) return;
 
         switch (msg->type) {
-            case SKSE::MessagingInterface::kInputLoaded: {
-                spdlog::info("[MSG] kInputLoaded");
-                SetupInputManagerAPI();
+            case SKSE::MessagingInterface::kNewGame:
+            case SKSE::MessagingInterface::kPostLoadGame: {
+                static bool s_apiInitialized = false;
+                if (!s_apiInitialized) {
+                    spdlog::info("[MSG] Getting the API");
+                    SetupInputManagerAPI();
+                    s_apiInitialized = true;
+                }
                 break;
             }
             case SKSE::MessagingInterface::kDataLoaded: {
