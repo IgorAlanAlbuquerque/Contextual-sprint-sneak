@@ -9,7 +9,7 @@
 
 using namespace std::literals;
 
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
     #define SSC_DEBUG_LOG(...) spdlog::info(__VA_ARGS__)

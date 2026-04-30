@@ -1,5 +1,1 @@
-set(headers
-    src/Hooks.h
-    src/SSCState.h
-    src/InputListener.h
-)
+collect_project_files(headers "${CMAKE_CURRENT_SOURCE_DIR}/include" "*.h")
